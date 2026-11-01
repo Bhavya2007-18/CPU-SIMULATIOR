@@ -63,7 +63,10 @@ In the interactive REPL: `step`, `run`, `reset`, `state`, `regs`, `flags`,
 
 A browser-based IDE-style frontend is connected to the real engine. A tiny,
 dependency-free C++ HTTP server (`build/cpu-server`) wraps the existing
-Debugger/CPU/Assembler and serves a JSON API plus the static frontend.
+Debugger/CPU/Assembler and serves a JSON API plus the static frontend. Each
+browser gets its **own private CPU session** (cookie-keyed), so multiple people
+can use it at once without clobbering each other; idle sessions expire after
+30 minutes.
 
 ```bash
 # Windows (no make): builds and starts the server, then open the printed URL
