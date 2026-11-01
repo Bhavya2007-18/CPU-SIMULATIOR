@@ -1,0 +1,20 @@
+# Build output
+/build/
+
+# Object files
+*.o
+*.obj
+
+# Executables
+*.exe
+cpu-simulator
+
+# Editor / OS cruft
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Diagnostics / temp
+*.txt
+!docs/*.txt
