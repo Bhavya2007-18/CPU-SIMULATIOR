@@ -35,6 +35,13 @@ function Build-Server {
     & $CXX @a
     if ($LASTEXITCODE -ne 0) { Fail "server build" }
 }
+function Build-ServerStatic {
+    # Statically linked: runs on a clean Windows machine without MSYS2 runtime DLLs.
+    $a = $CXXFLAGS + $LIB + $SRV_SRC + @("-static", "-lws2_32", "-o", "$BUILD/cpu-server-portable.exe")
+    & $CXX @a
+    if ($LASTEXITCODE -ne 0) { Fail "static server build" }
+    Write-Output "Built portable $BUILD/cpu-server-portable.exe"
+}
 
 switch ($Target) {
     "all" {
@@ -67,6 +74,12 @@ switch ($Target) {
         Build-Server
         Write-Output "Starting CPU Simulator server at http://localhost:8080  (Ctrl+C to stop)"
         & "$BUILD/cpu-server.exe"
+    }
+    "static" { Build-ServerStatic }
+    "deploy" {
+        Build-ServerStatic
+        Write-Output "Portable server ready: $BUILD/cpu-server-portable.exe"
+        Write-Output "Copy it + the frontend/ folder to the target machine and run it as a service."
     }
     "clean" {
         if (Test-Path $BUILD) { Remove-Item -Recurse -Force $BUILD }
