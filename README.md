@@ -1,507 +1,153 @@
-# CPU-SIMULATIOR
+# CPU SIMULATOR
 
-> **A software-based 8-bit CPU architecture simulator for visualizing how a processor fetches, decodes, and executes instructions.**
+A software-only **8-bit CPU simulator** built from scratch in C++17 — ISA,
+registers, ALU, memory, instruction decoder, assembler, fetch-decode-execute
+engine, debugger, execution trace, and tests. A **Digital Logic & Computer
+Design (DLCD) PBL** project.
 
-CPU SIMULATOR is a browser-based educational CPU simulator that recreates the fundamental components and execution cycle of a simple 8-bit processor entirely in software.
+> "We designed an 8-bit CPU architecture, defined our own instruction set,
+> created an assembler, simulated memory and registers, implemented an ALU, and
+> built a fetch-decode-execute engine capable of executing our machine code."
 
-The project allows users to write assembly-like instructions, execute them step-by-step, and observe how data moves through the **Control Unit, ALU, Registers, and Memory**.
+## Pipeline
 
-Built as a **Digital Logic & Computer Design (DLCD) Project-Based Learning (PBL)** project.
+```
+Assembly ─► Assembler ─► Machine code ─► Memory ─► CPU
+                                                      │
+   ┌──────────────────────────────────────────────────┘
+   ▼
+ Fetch ─► Decode ─► Execute ─► ALU / Registers / Memory ─► CPU State ─► Debugger
+```
 
----
+## Build & run
 
-## 🚀 Features
+You need a C++17 compiler (`g++`, `clang++`, or MSVC).
 
-### 🧠 CPU Architecture
+**GNU Make** (Linux / macOS / MinGW-make):
 
-- 8-bit CPU architecture
-- Program Counter (PC)
-- Instruction Register (IR)
-- Accumulator
-- General-purpose registers
-- Stack Pointer
-- Status/Flag register
-- Fetch → Decode → Execute cycle
-- Clock-cycle based execution
+```bash
+make            # build the simulator (./build/cpu-simulator)
+make test       # build + run all unit tests
+make run         # run the acceptance program
+make clean
+```
 
-### ⚙️ ALU
+**Windows without Make** (this repo includes `build.ps1`):
 
-The Arithmetic Logic Unit supports:
+```powershell
+.\build.ps1            # build
+.\build.ps1 test       # build + run all unit tests
+.\build.ps1 run        # run the acceptance program
+.\build.ps1 clean
+```
 
-- Addition
-- Subtraction
-- AND
-- OR
-- XOR
-- NOT
-- Increment
-- Decrement
+The project compiles cleanly under `-Wall -Wextra -Wpedantic` (and `-Werror`).
 
-### 🚩 Flags
+## Usage
 
-The simulator tracks processor flags including:
+```bash
+# Run a program to completion and print the final state:
+./build/cpu-simulator --run examples/acceptance.asm
 
-- Zero Flag
-- Carry Flag
-- Sign Flag
-- Overflow Flag
+# Interactive debugger (step, breakpoints, memory, trace, ...):
+./build/cpu-simulator examples/acceptance.asm
+```
 
-### 💾 Memory
+In the interactive REPL: `step`, `run`, `reset`, `state`, `regs`, `flags`,
+`mem [start] [count]`, `trace [n]`, `break <addr>`, `unbreak <addr>`, `breaks`,
+`help`, `quit`. See [`docs/debugger.md`](docs/debugger.md).
 
-- 8-bit memory architecture
-- Addressable RAM
-- Read/write operations
-- Memory visualization
-- Program storage
-- Runtime memory updates
+## Architecture
 
-### 📝 Assembly
+- **8-bit** data, **8-bit** addresses, **256 bytes** of RAM.
+- Registers: `A B C D` (general purpose), `PC`, `IR`, `SP`.
+- Flags: `Z` (zero), `C` (carry/borrow), `S` (sign), `V` (overflow).
+- 21 instructions, 1–3 bytes each. Full encoding in [`docs/isa.md`](docs/isa.md).
 
-Write programs using the simulator's instruction set.
+## Instruction set
 
-Example:
+```
+NOP HALT
+LOAD  STORE  MOV
+ADD SUB AND OR XOR NOT INC DEC CMP
+JMP JZ JNZ
+PUSH POP CALL RET
+```
+
+Example encoding: `ADD A, B` → `05 00 01` (opcode `0x05`, dst `A=0x00`, src `B=0x01`).
+
+## Examples
+
+| File                      | Demonstrates                                    |
+|---------------------------|--------------------------------------------------|
+| `examples/addition.asm`   | arithmetic + memory store                        |
+| `examples/subtraction.asm`| subtraction + memory store                        |
+| `examples/loop.asm`       | branching/labels, the Zero flag driving a loop   |
+| `examples/fibonacci.asm`  | iterative loops, register copy, flags            |
+| `examples/memory.asm`     | stores + stack round-trip (PUSH/POP)             |
+| `examples/acceptance.asm` | the section-34 acceptance program                 |
+
+## Project structure
+
+```
+include/          module interfaces (types, isa, registers, alu, memory,
+                  decoder, cpu, assembler, debugger, execution_trace)
+src/              implementations, grouped by module
+tests/            one standalone test program per module + integration
+examples/         sample assembly programs
+docs/             architecture / isa / instruction cycle / memory / debugger
+Makefile          GNU Make build (make / make test / make run / make clean)
+build.ps1         PowerShell build for Windows without make
+```
+
+## Testing
+
+Six standalone test programs cover each module plus full-program integration:
+
+```
+test_alu        test_memory      test_decoder
+test_cpu        test_assembler   test_integration
+```
+
+Run with `make test` (or `.\build.ps1 test`).
+
+## Acceptance test
+
+The section-34 program (`examples/acceptance.asm`) is the canonical check:
 
 ```asm
-LOAD A, 10
-LOAD B, 20
-ADD A, B
-STORE A, 50
-HALT
+START:
+    LOAD A, 10
+    LOAD B, 20
+    ADD A, B
+    STORE A, 50
+
+    LOAD C, 5
+    SUB A, C
+    STORE A, 51
+
+    HALT
 ```
 
-The assembler converts the instructions into the simulator's internal machine representation before execution.
+Expected final state — and what the simulator produces:
 
-### ▶️ Execution Controls
-
-- Run
-- Pause
-- Step-by-step execution
-- Reset
-- Execution speed control
-- Register inspection
-- Memory inspection
-
-### 📊 Visualization
-
-The simulator provides a visual representation of:
-
-```text
-Program
-   ↓
-Memory
-   ↓
-Instruction Register
-   ↓
-Control Unit
-   ↓
-Registers
-   ↓
-ALU
-   ↓
-Memory
+```
+A = 25        B = 20        C = 5
+Memory[50] = 30     Memory[51] = 25     CPU = HALTED
 ```
 
-This makes the internal operation of a processor easier to understand and observe.
-
----
-
-# 🏗️ System Architecture
-
-```text
-                    ┌───────────────────┐
-                    │     PROGRAM       │
-                    │  Assembly Code    │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │     ASSEMBLER     │
-                    │ Instruction Parser│
-                    └─────────┬─────────┘
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │      MEMORY       │
-                    │      256 × 8      │
-                    └─────────┬─────────┘
-                              │
-                              ▼
-              ┌───────────────────────────────┐
-              │             CPU               │
-              │                               │
-              │   ┌───────────────────────┐   │
-              │   │    CONTROL UNIT       │   │
-              │   └───────────┬───────────┘   │
-              │               │               │
-              │   ┌───────────▼───────────┐   │
-              │   │       REGISTERS       │   │
-              │   └───────────┬───────────┘   │
-              │               │               │
-              │   ┌───────────▼───────────┐   │
-              │   │          ALU          │   │
-              │   └───────────┬───────────┘   │
-              │               │               │
-              │   ┌───────────▼───────────┐   │
-              │   │    FLAGS / STATUS     │   │
-              │   └───────────────────────┘   │
-              └───────────────┬───────────────┘
-                              │
-                              ▼
-                         RESULT / RAM
-```
-
----
-
-# 🔄 CPU Execution Cycle
-
-Every instruction follows the basic processor cycle:
-
-```text
-┌─────────┐
-│  FETCH  │
-└────┬────┘
-     ↓
-┌─────────┐
-│ DECODE  │
-└────┬────┘
-     ↓
-┌─────────┐
-│ EXECUTE │
-└────┬────┘
-     ↓
-┌─────────┐
-│  WRITE  │
-└────┬────┘
-     ↓
-┌─────────┐
-│ UPDATE  │
-│  FLAGS  │
-└────┬────┘
-     ↓
-   NEXT
-INSTRUCTION
-```
-
-### Example
-
-For:
-
-```asm
-ADD A, B
-```
-
-the CPU performs:
-
-```text
-1. Fetch ADD instruction
-        ↓
-2. Decode instruction
-        ↓
-3. Read A and B
-        ↓
-4. Send operands to ALU
-        ↓
-5. Perform addition
-        ↓
-6. Store result in A
-        ↓
-7. Update flags
-        ↓
-8. Increment Program Counter
-```
-
----
-
-# 📚 Instruction Set
-
-The simulator supports a custom instruction set designed for the 8-bit architecture.
-
-| Instruction | Description |
-|---|---|
-| `LOAD` | Load an immediate value into a register |
-| `STORE` | Store register value into memory |
-| `MOV` | Copy data between registers |
-| `ADD` | Addition |
-| `SUB` | Subtraction |
-| `AND` | Bitwise AND |
-| `OR` | Bitwise OR |
-| `XOR` | Bitwise XOR |
-| `NOT` | Bitwise NOT |
-| `INC` | Increment |
-| `DEC` | Decrement |
-| `CMP` | Compare values |
-| `JMP` | Unconditional jump |
-| `JZ` | Jump if Zero Flag is set |
-| `HALT` | Stop execution |
-
-> The instruction set may evolve as additional CPU functionality is implemented.
-
----
-
-# 🧪 Example Program
-
-```asm
-LOAD A, 10
-LOAD B, 20
-
-ADD A, B
-
-STORE A, 50
-
-LOAD C, 5
-
-SUB A, C
-
-STORE A, 51
-
-HALT
-```
-
-### Expected flow
-
-```text
-A = 10
-B = 20
-
-      ↓ ADD
-
-A = 30
-
-      ↓ STORE
-
-MEM[50] = 30
-
-      ↓ LOAD C
-
-C = 5
-
-      ↓ SUB
-
-A = 25
-
-      ↓ STORE
-
-MEM[51] = 25
-```
-
----
-
-# 🛠️ Technology Stack
-
-The project is designed as a completely software-based application.
-
-### Frontend
-
-- React
-- TypeScript
-- HTML
-- CSS
-- Tailwind CSS
-
-### CPU Simulation
-
-- TypeScript
-- Custom CPU emulator
-- Custom instruction decoder
-- Custom assembler/parser
-
-### Visualization
-
-- SVG / Canvas
-- Interactive CPU components
-- Real-time state updates
-
-### Deployment
-
-The simulator can be deployed as a static web application using platforms such as Vercel or GitHub Pages.
-
----
-
-# 📁 Project Structure
-
-```text
-CPU-SIMULATOR/
-│
-├── src/
-│   │
-│   ├── cpu/
-│   │   ├── cpu.ts
-│   │   ├── controlUnit.ts
-│   │   ├── instructionDecoder.ts
-│   │   └── clock.ts
-│   │
-│   ├── alu/
-│   │   ├── alu.ts
-│   │   └── flags.ts
-│   │
-│   ├── registers/
-│   │   └── registers.ts
-│   │
-│   ├── memory/
-│   │   └── memory.ts
-│   │
-│   ├── assembler/
-│   │   ├── parser.ts
-│   │   └── instructionSet.ts
-│   │
-│   ├── components/
-│   │   ├── CPUView.tsx
-│   │   ├── RegisterPanel.tsx
-│   │   ├── MemoryView.tsx
-│   │   ├── ALUView.tsx
-│   │   └── CodeEditor.tsx
-│   │
-│   └── App.tsx
-│
-├── public/
-│
-├── README.md
-├── package.json
-└── tsconfig.json
-```
-
----
-
-# 👥 Team Contributions
-
-The project is divided into four major modules.
-
-### Person 1 — CPU Architecture & Control Unit
-
-Responsible for:
-
-- CPU architecture
-- Control Unit
-- Program Counter
-- Instruction Register
-- Fetch/Decode/Execute cycle
-- Instruction decoding
-- CPU state management
-
-### Person 2 — ALU & Registers
-
-Responsible for:
-
-- Arithmetic operations
-- Logical operations
-- Registers
-- Flag register
-- Zero/Carry/Sign/Overflow handling
-- ALU testing
-
-### Person 3 — Memory & Instruction System
-
-Responsible for:
-
-- RAM implementation
-- Memory addressing
-- Instruction set
-- Assembly parser
-- Instruction encoding
-- Program loading
-
-### Person 4 — UI & Integration
-
-Responsible for:
-
-- User interface
-- CPU visualization
-- Code editor
-- Execution controls
-- Register/memory visualization
-- Animation
-- Integration of all modules
-
----
-
-# 🎯 Project Objectives
-
-The primary objectives of CPU SIMULATOR are to:
-
-1. Understand the internal architecture of a CPU.
-2. Simulate the basic operation of a processor entirely through software.
-3. Demonstrate the Fetch–Decode–Execute instruction cycle.
-4. Understand the role of the ALU and registers.
-5. Demonstrate memory addressing and data transfer.
-6. Understand how assembly instructions are executed.
-7. Visualize the interaction between different CPU components.
-8. Provide an interactive learning environment for digital logic and computer architecture.
-
----
-
-# 📖 DLCD Concepts Demonstrated
-
-This project demonstrates several concepts studied in **Digital Logic & Computer Design**:
-
-- Logic operations
-- Arithmetic circuits
-- ALU
-- Registers
-- Flip-flop based state concepts
-- Control Unit
-- Instruction decoding
-- Data buses
-- Memory organization
-- Addressing
-- Counters
-- Sequential logic
-- Finite-state control
-- CPU architecture
-
----
-
-# 🔮 Future Scope
-
-Possible future improvements include:
-
-- 16-bit CPU architecture
-- Pipelining
-- Cache memory simulation
-- Interrupt handling
-- Stack-based instructions
-- I/O simulation
-- Branch prediction
-- Multi-cycle CPU architecture
-- Custom machine-code editor
-- CPU performance statistics
-- Circuit-level visualization
-- Logic-gate-level CPU implementation
-- Export/import of assembly programs
-
----
-
-# 📌 Limitations
-
-This project is an educational CPU simulator and does not attempt to reproduce a commercial processor.
-
-The simulated CPU has:
-
-- A simplified instruction set
-- Limited memory
-- Simplified control logic
-- No physical hardware implementation
-- No operating system layer
-
-Its purpose is to demonstrate the fundamental principles of processor architecture in an interactive environment.
-
----
-
-# 🎓 Academic Context
-
-**Project:** CPU SIMULATOR  
-**Subject:** Digital Logic & Computer Design (DLCD)  
-**Project Type:** Project-Based Learning (PBL)  
-**Architecture:** 8-bit Software CPU  
-**Implementation:** Fully Software-Based
-
----
-
-# 📜 License
-
-This project is developed for educational and academic purposes.
-
----
-
-## CPU SIMULATOR
-
-**Understand the CPU by building the CPU.**
+## Documentation
+
+- [docs/architecture.md](docs/architecture.md) — CPU architecture and components
+- [docs/isa.md](docs/isa.md) — every instruction, encoding, flags
+- [docs/instruction_cycle.md](docs/instruction_cycle.md) — fetch/decode/execute
+- [docs/memory.md](docs/memory.md) — memory model and API
+- [docs/debugger.md](docs/debugger.md) — step/run/breakpoints/trace
+
+## Status & roadmap
+
+The CPU engine, assembler, debugger, trace and tests are complete and the CLI
+is fully functional. The next step is an optional graphical front end that
+visualises `CPUState`, the ALU, and the `ExecutionTrace` — the architecture
+already exposes everything the UI needs through `getState()`, `trace()`, and the
+read-only `Memory::data()` view.
