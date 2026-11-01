@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"outline-variant":"#3e484f","inverse-on-surface":"#2e3037","surface-tint":"#7bd0ff","secondary":"#4cd6fb","surface-variant":"#32353c","secondary-fixed":"#b3ebff","secondary-container":"#00b2d6","background":"#101319","inverse-primary":"#00668a","surface-container":"#1d2026","on-error-container":"#ffdad6","on-primary":"#00354a","on-tertiary-fixed":"#002113","surface":"#101319","inverse-surface":"#e1e2eb","on-tertiary-container":"#004e34","on-primary-container":"#004965","secondary-fixed-dim":"#4cd6fb","primary":"#8ed5ff","primary-fixed-dim":"#7bd0ff","primary-fixed":"#c4e7ff","error":"#ffb4ab","tertiary-container":"#30c88f","surface-dim":"#101319","surface-container-high":"#272a31","surface-container-low":"#191c22","error-container":"#93000a","on-secondary-fixed-variant":"#004e5f","outline":"#87929a","on-error":"#690005","on-surface-variant":"#bdc8d1","on-tertiary-fixed-variant":"#005236","on-surface":"#e1e2eb","on-secondary-container":"#003f4e","on-primary-fixed":"#001e2c","surface-bright":"#363940","tertiary-fixed-dim":"#4edea3","tertiary-fixed":"#6ffbbe","on-tertiary":"#003824","on-background":"#e1e2eb","primary-container":"#38bdf8","on-primary-container-custom":"#00354a","on-primary-fixed-variant":"#004c69","on-secondary":"#003642","tertiary":"#56e5a9","surface-container-highest":"#32353c","surface-container-lowest":"#0b0e14","on-secondary-fixed":"#001f27"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-lg":"0.75rem","gutter-md":"0.75rem","space-md":"0.5rem","space-xs":"0.125rem",gutter:"0.5rem","margin-lg":"1rem","space-xl":"1rem","space-sm":"0.25rem",margin:"0.75rem"},fontFamily:{"body-md":["Inter"],"body-sm":["Inter"],"label-code-md":["JetBrains Mono"],"headline-sm":["Inter"],"headline-md":["Inter"],"label-code-sm":["JetBrains Mono"],"label-code-lg":["JetBrains Mono"],"headline-lg":["Inter"]},fontSize:{"body-md":["0.8125rem",{lineHeight:"1.25rem",fontWeight:"400"}],"body-sm":["0.75rem",{lineHeight:"1rem",fontWeight:"400"}],"label-code-md":["0.75rem",{lineHeight:"1.125rem",letterSpacing:"0em",fontWeight:"400"}],"headline-sm":["0.875rem",{lineHeight:"1.25rem",letterSpacing:"0.02em",fontWeight:"600"}],"headline-md":["1.125rem",{lineHeight:"1.5rem",letterSpacing:"-0.01em",fontWeight:"600"}],"label-code-sm":["0.6875rem",{lineHeight:"0.875rem",letterSpacing:"0.03em",fontWeight:"500"}],"label-code-lg":["0.875rem",{lineHeight:"1.25rem",letterSpacing:"-0.01em",fontWeight:"500"}],"headline-lg":["1.5rem",{lineHeight:"2rem",letterSpacing:"-0.015em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary selection:text-on-primary"><header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface-container-low border-b border-outline-variant/40 flex items-center justify-between px-margin-lg shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="flex items-center gap-space-lg"><div class="flex flex-col"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">memory</span><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">CPU SIMULATOR</span></div><span class="font-label-code-sm text-label-code-sm text-outline tracking-widest pl-[28px]">8-BIT ARCHITECTURE LAB</span></div><div class="h-6 w-px bg-outline-variant/50 mx-space-xs"></div><div class="flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container rounded border border-tertiary/40"><span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#56e5a9]"></span><span class="font-label-code-sm text-label-code-sm text-tertiary uppercase">READY</span></div><div class="flex items-center gap-space-xs font-label-code-md text-label-code-md"><div class="px-space-md py-space-xs bg-surface-container-highest/60 rounded border border-outline-variant/30 text-on-surface-variant"><span class="text-outline">PC:</span> <span class="text-secondary font-label-code-lg text-label-code-lg">0x0A</span></div><div class="px-space-md py-space-xs bg-surface-container-highest/60 rounded border border-outline-variant/30 text-on-surface-variant"><span class="text-outline">CYCLE:</span> <span class="text-primary font-label-code-lg text-label-code-lg">12</span></div></div></div><nav class="flex items-center h-full" data-active-classes="bg-surface-container-highest text-primary border-b-2 border-primary"><a class="h-full flex items-center px-space-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-code-md text-label-code-md" data-path="main-simulator" href="#">Workspace</a><a aria-current="page" class="h-full flex items-center px-space-md transition-colors font-label-code-md bg-surface-container-highest text-primary border-b-2 border-primary" data-path="block-diagram" href="#">Block Diagram</a><a class="h-full flex items-center px-space-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-code-md text-label-code-md" data-path="memory-matrix" href="#">256B Memory</a><a class="h-full flex items-center px-space-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-code-md text-label-code-md" data-path="debugger-trace" href="#">Debugger & Trace</a><a class="h-full flex items-center px-space-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-code-md text-label-code-md" data-path="isa-documentation" href="#">ISA Manual</a></nav><div class="flex items-center gap-space-sm"><button class="p-space-xs rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center" title="Quick Reference (Opcodes)" type="button"><span class="material-symbols-outlined text-[18px]">menu_book</span></button><button class="p-space-xs rounded bg-surface-container-high border border-outline-variant hover:border-error text-on-surface-variant hover:text-error transition-colors flex items-center justify-center" title="Reset Hardware State" type="button"><span class="material-symbols-outlined text-[18px]">restart_alt</span></button><button class="p-space-xs rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center" title="Settings" type="button"><span class="material-symbols-outlined text-[18px]">tune</span></button><button class="p-space-xs rounded bg-surface-container-high border border-outline-variant hover:border-primary text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center" title="Help & Shortcuts" type="button"><span class="material-symbols-outlined text-[18px]">help_outline</span></button><div class="h-5 w-px bg-outline-variant/50 mx-space-xs"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 pb-14 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="p-margin-lg space-y-gutter-md">
+<!-- Top Pipeline Phase Ribbon -->
+<section class="bg-surface-container-low rounded-xl p-space-md shadow-md">
+<div class="flex flex-col md:flex-row items-stretch justify-between gap-space-sm">
+<!-- Phase 1: FETCH -->
+<div class="flex-1 bg-surface-container rounded p-space-sm transition-all">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-code-sm text-label-code-sm text-outline tracking-wider">PHASE 01</span>
+<span class="font-label-code-sm text-label-code-sm text-outline">T0-T1</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_downward</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">FETCH</span>
+</div>
+<div class="font-label-code-sm text-label-code-sm text-on-surface-variant">
+            PC → MAR → RAM
+          </div>
+<div class="mt-space-sm h-1 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Phase 2: DECODE -->
+<div class="flex-1 bg-surface-container rounded p-space-sm transition-all">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-code-sm text-label-code-sm text-outline tracking-wider">PHASE 02</span>
+<span class="font-label-code-sm text-label-code-sm text-outline">T2</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">terminal</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">DECODE</span>
+</div>
+<div class="font-label-code-sm text-label-code-sm text-on-surface-variant">
+            RAM → IR → CU
+          </div>
+<div class="mt-space-sm h-1 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Phase 3: EXECUTE (ACTIVE) -->
+<div class="flex-1 bg-surface-container-high rounded p-space-sm shadow-md ring-1 ring-secondary/50 relative overflow-hidden">
+<div class="absolute -right-2 -top-2 w-16 h-16 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-code-sm text-label-code-sm text-secondary font-semibold tracking-wider flex items-center gap-space-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+              PHASE 03 [ACTIVE]
+            </span>
+<span class="font-label-code-sm text-label-code-sm text-secondary">T3</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">flash_on</span>
+<span class="font-headline-sm text-headline-sm text-primary">EXECUTE</span>
+</div>
+<div class="font-label-code-sm text-label-code-sm text-secondary-fixed">
+            Regs → ALU (ADD) → Bus
+          </div>
+<div class="mt-space-sm h-1 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary w-full animate-pulse"></div>
+</div>
+</div>
+<!-- Phase 4: WRITE BACK -->
+<div class="flex-1 bg-surface-container rounded p-space-sm transition-all opacity-85">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-code-sm text-label-code-sm text-outline tracking-wider">PHASE 04</span>
+<span class="font-label-code-sm text-label-code-sm text-outline">T4</span>
+</div>
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">save_alt</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">WRITE-BACK</span>
+</div>
+<div class="font-label-code-sm text-label-code-sm text-on-surface-variant">
+            Bus → Reg A [Pending]
+          </div>
+<div class="mt-space-sm h-1 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+</section>
+<!-- Main Schematic & Data Path Workspace -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter-md">
+<!-- Primary Schematic Canvas (8 Cols) -->
+<section class="xl:col-span-8 bg-surface-container-low rounded-xl p-margin-lg shadow-lg relative flex flex-col justify-between">
+<!-- Header Strip -->
+<div class="flex items-center justify-between pb-space-md mb-space-md bg-surface-container-lowest/40 -mx-margin-lg -mt-margin-lg px-margin-lg pt-space-md rounded-t-xl">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[22px]">developer_board</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">MICROARCHITECTURE SCHEMATIC</h2>
+<p class="font-label-code-sm text-label-code-sm text-outline">Synchronous Harvard-Class Von-Neumann Hybrid Datapath</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-sm py-space-xs bg-surface-container-highest text-secondary font-label-code-sm text-label-code-sm rounded">INST: ADD A, B</span>
+<span class="px-space-sm py-space-xs bg-surface-container text-tertiary font-label-code-sm text-label-code-sm rounded">OPCODE: 0x80</span>
+</div>
+</div>
+<!-- System Buses Live Trackers -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm mb-space-lg">
+<div class="bg-surface-container rounded p-space-sm flex items-center justify-between shadow-sm">
+<div>
+<div class="font-label-code-sm text-label-code-sm text-outline uppercase tracking-wider">Internal Data Bus (8-bit)</div>
+<div class="font-label-code-lg text-label-code-lg text-secondary font-bold">0x1E <span class="font-label-code-sm text-label-code-sm text-on-surface-variant font-normal">[0001 1110]</span></div>
+</div>
+<div class="flex items-center gap-1">
+<span class="h-2 w-2 rounded-full bg-secondary animate-ping"></span>
+<span class="font-label-code-sm text-label-code-sm text-secondary font-semibold">ASSERTED</span>
+</div>
+</div>
+<div class="bg-surface-container rounded p-space-sm flex items-center justify-between shadow-sm">
+<div>
+<div class="font-label-code-sm text-label-code-sm text-outline uppercase tracking-wider">Address Bus (8-bit)</div>
+<div class="font-label-code-lg text-label-code-lg text-primary font-bold">0x06 <span class="font-label-code-sm text-label-code-sm text-on-surface-variant font-normal">[0000 0110]</span></div>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-outline">LATCHED</span>
+</div>
+<div class="bg-surface-container rounded p-space-sm flex items-center justify-between shadow-sm">
+<div>
+<div class="font-label-code-sm text-label-code-sm text-outline uppercase tracking-wider">Control Bus State</div>
+<div class="font-label-code-lg text-label-code-lg text-tertiary font-bold">REG_WR • ALU_OE</div>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-tertiary">STABLE</span>
+</div>
+</div>
+<!-- Interactive Architecture Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md my-space-xs">
+<!-- Column A: Control Unit & Memory (md:col-span-5) -->
+<div class="md:col-span-5 flex flex-col gap-space-md">
+<!-- Control Unit Box -->
+<div class="bg-surface-container-high rounded-xl p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">alt_route</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">CONTROL UNIT</span>
+</div>
+<span class="font-label-code-sm text-label-code-sm px-space-xs py-0.5 bg-surface-container rounded text-outline">FSM STATE #3</span>
+</div>
+<!-- Microcode Sequencer Sub-block -->
+<div class="bg-surface-container-lowest/80 rounded p-space-sm mb-space-sm space-y-space-xs">
+<div class="flex justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Instruction Register (IR):</span>
+<span class="text-secondary font-semibold">0x80 [ADD A, B]</span>
+</div>
+<div class="flex justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Micro-Step Counter:</span>
+<span class="text-on-surface">uPC: 0x03</span>
+</div>
+<div class="flex justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Decoder Matrix:</span>
+<span class="text-tertiary font-medium">DIRECT MAPPING</span>
+</div>
+</div>
+<!-- Control Lines Matrix -->
+<div class="font-label-code-sm text-label-code-sm text-outline mb-space-xs uppercase tracking-wider">Asserted Control Signals</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-label-code-sm text-label-code-sm text-on-surface">RegWrite</span>
+<span class="px-space-xs rounded bg-tertiary-container text-on-tertiary font-bold font-label-code-sm text-label-code-sm">1</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-label-code-sm text-label-code-sm text-on-surface">ALUSrc</span>
+<span class="px-space-xs rounded bg-surface-container-highest text-secondary font-bold font-label-code-sm text-label-code-sm">REG_B</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-label-code-sm text-label-code-sm text-outline">MemRead</span>
+<span class="px-space-xs rounded bg-surface-container-lowest text-outline font-label-code-sm text-label-code-sm">0</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-label-code-sm text-label-code-sm text-outline">MemWrite</span>
+<span class="px-space-xs rounded bg-surface-container-lowest text-outline font-label-code-sm text-label-code-sm">0</span>
+</div>
+</div>
+</div>
+<!-- Memory Subsystem Block (RAM & Registers MAR/MDR) -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">dns</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">256-BYTE RAM INTERFACE</span>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-outline">IDLE (EXECUTE PHASE)</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm mb-space-sm">
+<div class="bg-surface-container-low p-space-sm rounded">
+<div class="font-label-code-sm text-label-code-sm text-outline">MAR (Address Reg)</div>
+<div class="font-label-code-md text-label-code-md text-primary font-semibold mt-space-xs">0x32 <span class="font-label-code-sm text-label-code-sm text-outline font-normal">[50d]</span></div>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<div class="font-label-code-sm text-label-code-sm text-outline">MDR (Data Reg)</div>
+<div class="font-label-code-md text-label-code-md text-secondary font-semibold mt-space-xs">0x1E <span class="font-label-code-sm text-label-code-sm text-outline font-normal">[Buffer]</span></div>
+</div>
+</div>
+<!-- Mini RAM cell preview -->
+<div class="bg-surface-container-lowest p-space-xs rounded font-label-code-sm text-label-code-sm flex items-center justify-between text-outline">
+<span>Row [0x30 - 0x37]</span>
+<span class="text-on-surface-variant font-mono">00 00 <span class="text-secondary font-bold">1E</span> 04 AA 12 00 00</span>
+</div>
+</div>
+</div>
+<!-- Column B: ALU & Register File Datapath (md:col-span-7) -->
+<div class="md:col-span-7 flex flex-col gap-space-md">
+<!-- ALU Block (Central focus) -->
+<div class="bg-surface-container-high rounded-xl p-space-md shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-secondary">calculate</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">ARITHMETIC LOGIC UNIT (ALU)</span>
+</div>
+<span class="px-space-sm py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-code-sm text-label-code-sm font-bold">MODE: ADDITION</span>
+</div>
+<!-- ALU Trapezoid Schematic visual structure -->
+<div class="space-y-space-sm">
+<!-- Inputs Dual Inset -->
+<div class="grid grid-cols-2 gap-space-md">
+<div class="bg-surface-container rounded p-space-sm">
+<div class="font-label-code-sm text-label-code-sm text-outline">Operand 1 (Input A)</div>
+<div class="font-label-code-lg text-label-code-lg text-primary font-bold">0x0A</div>
+<div class="font-label-code-sm text-label-code-sm text-outline font-mono">0000 1010 [10d]</div>
+</div>
+<div class="bg-surface-container rounded p-space-sm">
+<div class="font-label-code-sm text-label-code-sm text-outline">Operand 2 (Input B)</div>
+<div class="font-label-code-lg text-label-code-lg text-primary font-bold">0x14</div>
+<div class="font-label-code-sm text-label-code-sm text-outline font-mono">0001 0100 [20d]</div>
+</div>
+</div>
+<!-- Live Core ALU Compute Pipeline Box -->
+<div class="bg-surface-container-lowest p-space-md rounded flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[24px]">sync_alt</span>
+<div>
+<div class="font-label-code-sm text-label-code-sm text-secondary font-semibold">ADDITION SYNTHESIS (8-BIT ADDER)</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">0x0A + 0x14 = 0x1E (30 Decimal)</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-label-code-sm text-label-code-sm text-outline">Bus Driver Output</div>
+<div class="font-label-code-lg text-label-code-lg text-tertiary font-bold">0x1E</div>
+</div>
+</div>
+<!-- Condition Flags Vector -->
+<div class="bg-surface-container rounded p-space-sm">
+<div class="font-label-code-sm text-label-code-sm text-outline mb-space-xs">CONDITION CODE REGISTER (CCR) / ALU FLAGS</div>
+<div class="grid grid-cols-4 gap-space-xs text-center font-label-code-sm text-label-code-sm">
+<div class="p-space-xs rounded bg-surface-container-low">
+<div class="text-outline">Z (Zero)</div>
+<div class="text-on-surface font-bold text-headline-sm">0</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low">
+<div class="text-outline">C (Carry)</div>
+<div class="text-on-surface font-bold text-headline-sm">0</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low">
+<div class="text-outline">S (Sign)</div>
+<div class="text-on-surface font-bold text-headline-sm">0</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low">
+<div class="text-outline">V (Overflow)</div>
+<div class="text-on-surface font-bold text-headline-sm">0</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Register File Block -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">grid_view</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">REGISTER FILE (DUAL PORT READ / WRITE)</span>
+</div>
+<span class="font-label-code-sm text-label-code-sm text-secondary font-medium">A ← ACCUMULATOR</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-space-xs">
+<!-- Reg A -->
+<div class="bg-surface-container-high rounded p-space-xs ring-1 ring-secondary/40">
+<div class="flex justify-between items-center text-secondary font-semibold font-label-code-sm text-label-code-sm">
+<span>REG A</span>
+<span class="text-[10px] text-secondary">DEST</span>
+</div>
+<div class="font-label-code-lg text-label-code-lg text-secondary font-bold">0x1E</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">0001 1110</div>
+</div>
+<!-- Reg B -->
+<div class="bg-surface-container-low rounded p-space-xs">
+<div class="text-outline font-label-code-sm text-label-code-sm">REG B</div>
+<div class="font-label-code-lg text-label-code-lg text-on-surface font-semibold">0x14</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">0001 0100</div>
+</div>
+<!-- Reg C -->
+<div class="bg-surface-container-low rounded p-space-xs">
+<div class="text-outline font-label-code-sm text-label-code-sm">REG C</div>
+<div class="font-label-code-lg text-label-code-lg text-on-surface font-semibold">0x05</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">0000 0101</div>
+</div>
+<!-- Reg D -->
+<div class="bg-surface-container-low rounded p-space-xs">
+<div class="text-outline font-label-code-sm text-label-code-sm">REG D</div>
+<div class="font-label-code-lg text-label-code-lg text-on-surface font-semibold">0x00</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">0000 0000</div>
+</div>
+<!-- SP -->
+<div class="bg-surface-container-low rounded p-space-xs col-span-2 sm:col-span-1">
+<div class="text-outline font-label-code-sm text-label-code-sm">SP (Stack)</div>
+<div class="font-label-code-lg text-label-code-lg text-primary font-semibold">0xFF</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">1111 1111</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Dock: Live Signal State & Logic Waveforms (4 Cols) -->
+<section class="xl:col-span-4 flex flex-col gap-gutter-md">
+<!-- Live Signal Status Table Card -->
+<div class="bg-surface-container-low rounded-xl p-margin-lg shadow-lg">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm border-b border-outline-variant/30">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">monitor_heart</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">LIVE SIGNAL STATUS</h3>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-tertiary font-label-code-sm text-label-code-sm font-semibold">NORMAL OK</span>
+</div>
+<div class="space-y-space-xs font-label-code-sm text-label-code-sm">
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">Master Clock Freq:</span>
+<span class="text-on-surface font-semibold">5.00 Hz (200ms Period)</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container-high rounded">
+<span class="text-outline">Current T-State:</span>
+<span class="text-secondary font-bold">T3 (EXECUTE PULSE)</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">OE (Output Enable):</span>
+<span class="text-tertiary font-semibold">ASSERTED (ALU → BUS)</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">WE (Write Enable):</span>
+<span class="text-on-surface-variant">LATCH_READY (T4 ARMED)</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">LE (Latch Enable):</span>
+<span class="text-on-surface font-medium">1 [ENABLED]</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">CE (Chip Enable):</span>
+<span class="text-outline font-medium">0 [RAM FLOATED]</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container rounded">
+<span class="text-outline">ALU_OP Lines:</span>
+<span class="text-primary font-mono font-semibold">0010 [ADD]</span>
+</div>
+<div class="flex justify-between py-space-xs px-space-sm bg-surface-container-lowest rounded">
+<span class="text-outline">Bus Contention:</span>
+<span class="text-tertiary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px]">verified</span> None Detected
+              </span>
+</div>
+</div>
+</div>
+<!-- Logic Analyzer Waveform Miniature -->
+<div class="bg-surface-container-low rounded-xl p-margin-lg shadow-lg">
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">show_chart</span>
+              DIGITAL TIMING TRACE
+            </span>
+<span class="font-label-code-sm text-label-code-sm text-outline">WINDOW: 8 CYCLES</span>
+</div>
+<!-- Waveform SVG Canvas -->
+<div class="bg-surface-container-lowest p-space-sm rounded space-y-space-sm font-label-code-sm text-label-code-sm">
+<div>
+<div class="flex justify-between text-outline text-[10px] mb-0.5">
+<span>CLK (MASTER)</span>
+<span class="text-secondary font-mono">T3 HIGH</span>
+</div>
+<svg class="w-full h-5 text-secondary" preserveaspectratio="none" viewbox="0 0 200 20">
+<path d="M0,15 L20,15 L20,3 L45,3 L45,15 L70,15 L70,3 L95,3 L95,15 L120,15 L120,3 L145,3 L145,15 L170,15 L170,3 L195,3 L195,15 L200,15" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+</svg>
+</div>
+<div>
+<div class="flex justify-between text-outline text-[10px] mb-0.5">
+<span>ALU_OE (ACTIVE LOW)</span>
+<span class="text-tertiary font-mono">ASSERTED</span>
+</div>
+<svg class="w-full h-5 text-tertiary" preserveaspectratio="none" viewbox="0 0 200 20">
+<path d="M0,3 L70,3 L70,15 L145,15 L145,3 L200,3" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+</svg>
+</div>
+<div>
+<div class="flex justify-between text-outline text-[10px] mb-0.5">
+<span>DATA_BUS VALID</span>
+<span class="text-primary font-mono">0x1E VALID</span>
+</div>
+<svg class="w-full h-5 text-primary" preserveaspectratio="none" viewbox="0 0 200 20">
+<path d="M0,10 L68,10 M70,5 L145,5 M70,15 L145,15 M147,10 L200,10" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Laboratory Environment Context -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">science</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Lab Mode: Single-Step</div>
+<div class="font-label-code-sm text-label-code-sm text-outline">Press [F6] in bottom bar to latch T4</div>
+</div>
+</div>
+<button class="px-space-md py-space-xs bg-primary-container text-on-primary font-label-code-sm text-label-code-sm rounded shadow-sm hover:bg-primary transition-colors" type="button">
+            INSPECT BUS
+          </button>
+</div>
+</section>
+</div>
+<!-- Pedagogical Inspection Cards (Architecture Theory & Callouts) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter-md pt-space-xs">
+<!-- Card 1: ALU Pedagogy -->
+<div class="bg-surface-container-low rounded-xl p-margin-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs mb-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">hub</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">ALU Combinational Path</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            The Arithmetic Logic Unit operates as pure combinational logic with zero inherent memory. When <span class="font-label-code-sm text-label-code-sm text-secondary bg-surface-container px-1 py-0.5 rounded">ALUSrc</span> gates Register B into the second adder port, the propagated propagate-generate signals settle within <15ns. The 8-bit sum <span class="font-label-code-sm text-label-code-sm text-primary">0x1E</span> stays on the internal bus until the clock edge latches.
+          </p>
+</div>
+<div class="mt-space-md pt-space-sm border-t border-outline-variant/30 flex items-center justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Settling Delay:</span>
+<span class="text-tertiary">14.2 ns [MET]</span>
+</div>
+</div>
+<!-- Card 2: Control Sequencer Pedagogy -->
+<div class="bg-surface-container-low rounded-xl p-margin-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs mb-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">tune</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Microcode & Control Lines</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            The Control Unit functions as a state machine micro-sequencer. During this Execute phase (T3), it asserts the tri-state output driver on the ALU while de-asserting memory lines to prevent data contention on the unified 8-bit bus. The destination latch in Register A will assert on T4.
+          </p>
+</div>
+<div class="mt-space-md pt-space-sm border-t border-outline-variant/30 flex items-center justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Current Micro-Word:</span>
+<span class="text-primary">#0b10010010</span>
+</div>
+</div>
+<!-- Card 3: Status Register & Flags -->
+<div class="bg-surface-container-low rounded-xl p-margin-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs mb-space-sm">
+<span class="material-symbols-outlined text-tertiary text-[20px]">flag</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Flag Evaluation Logic</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Flags are evaluated asynchronously at the output of the full-adder tree. Since <span class="font-label-code-sm text-label-code-sm text-secondary">0x0A + 0x14 = 0x1E</span> (30d), the result is non-zero (<span class="font-label-code-sm text-label-code-sm text-outline">Z=0</span>), positive sign bit 7 is low (<span class="font-label-code-sm text-label-code-sm text-outline">S=0</span>), and bit 8 carry out is unasserted (<span class="font-label-code-sm text-label-code-sm text-outline">C=0</span>).
+          </p>
+</div>
+<div class="mt-space-md pt-space-sm border-t border-outline-variant/30 flex items-center justify-between font-label-code-sm text-label-code-sm">
+<span class="text-outline">Overflow Condition:</span>
+<span class="text-on-surface-variant">V = C7 ⊕ C8 = 0</span>
+</div>
+</div>
+</section>
+</div>
+</div></main><footer class="fixed bottom-0 left-0 right-0 z-50 h-14 bg-surface-container-lowest border-t border-outline-variant/40 flex items-center justify-between px-margin-lg shadow-[0_-2px_10px_rgba(0,0,0,0.5)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs"><button class="h-8 px-space-md bg-surface-container border border-outline-variant/80 hover:border-tertiary text-tertiary hover:bg-surface-container-high rounded flex items-center gap-space-xs font-label-code-sm text-label-code-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">play_arrow</span><span>RUN <span class="text-outline">[F5]</span></span></button><button class="h-8 px-space-lg bg-primary-container text-on-primary hover:bg-primary rounded border border-primary flex items-center gap-space-xs font-label-code-sm text-label-code-sm shadow-[0_0_8px_rgba(56,189,248,0.4)] transition-all" type="button"><span class="material-symbols-outlined text-[16px]">redo</span><span>STEP <span class="opacity-80">[F6]</span></span></button><button class="h-8 px-space-md bg-surface-container border border-outline-variant/80 hover:border-outline text-on-surface-variant hover:text-on-surface rounded flex items-center gap-space-xs font-label-code-sm text-label-code-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">pause</span><span>PAUSE <span class="text-outline">[F8]</span></span></button><button class="h-8 px-space-md bg-surface-container border border-outline-variant/80 hover:border-error text-error hover:bg-surface-container-high rounded flex items-center gap-space-xs font-label-code-sm text-label-code-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">replay</span><span>RESET <span class="text-outline">[R]</span></span></button></div><div class="h-5 w-px bg-outline-variant/50 mx-space-xs"></div><div class="flex items-center gap-space-xs"><button class="h-8 px-space-md bg-surface-container-high border border-outline-variant/70 hover:border-secondary text-secondary hover:bg-surface-container-highest rounded flex items-center gap-space-xs font-label-code-sm text-label-code-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">build</span><span>ASSEMBLE</span></button><button class="h-8 px-space-md bg-surface-container-high border border-outline-variant/70 hover:border-primary text-primary hover:bg-surface-container-highest rounded flex items-center gap-space-xs font-label-code-sm text-label-code-sm transition-colors" type="button"><span class="material-symbols-outlined text-[16px]">file_upload</span><span>LOAD MEMORY</span></button></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-md"><span class="font-label-code-sm text-label-code-sm text-outline flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px]">speed</span>CLOCK SPEED:</span><div class="flex items-center bg-surface-container rounded border border-outline-variant/50 p-space-xs gap-space-xs"><button class="px-space-sm py-0.5 rounded font-label-code-sm text-label-code-sm text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" type="button">1Hz</button><button class="px-space-sm py-0.5 rounded font-label-code-sm text-label-code-sm bg-primary-container text-on-primary font-semibold" type="button">5Hz</button><button class="px-space-sm py-0.5 rounded font-label-code-sm text-label-code-sm text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" type="button">20Hz</button><button class="px-space-sm py-0.5 rounded font-label-code-sm text-label-code-sm text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" type="button">MAX</button></div></div><div class="h-5 w-px bg-outline-variant/50"></div><div class="flex items-center gap-space-xs font-label-code-sm text-label-code-sm text-outline"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span>BUS: IDLE</span></div></div></footer></body></html>

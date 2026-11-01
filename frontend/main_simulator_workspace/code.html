@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CPU Simulator v1.4.2 IDE</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            ide: {
+              bg: "#121214",
+              panel: "#18181b",
+              elevated: "#1f1f23",
+              border: "#27272a",
+              borderLight: "#333338",
+              text: "#f4f4f5",
+              muted: "#71717a",
+              active: "#2563eb",
+              activeSubtle: "rgba(37, 99, 235, 0.15)",
+              gutter: "#18181b",
+              gutterBorder: "#27272a"
+            }
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+            mono: ["JetBrains Mono", "Menlo", "Courier New", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      user-select: none;
+    }
+    .code-select {
+      user-select: text;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #141416;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2e2e33;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3e3e44;
+    }
+  </style>
+</head>
+<body class="bg-ide-bg text-ide-text font-sans antialiased text-xs h-screen flex flex-col justify-between">
+<!-- TOP MENU & HEADER BAR -->
+<header class="h-10 bg-ide-panel border-b border-ide-border flex items-center justify-between px-3 shrink-0 z-20">
+<div class="flex items-center gap-3">
+<!-- Title & Version -->
+<div class="flex items-center gap-2 pr-2 border-r border-ide-border">
+<span class="material-symbols-outlined text-[18px] text-zinc-300">memory</span>
+<span class="font-semibold tracking-tight text-zinc-100 text-[13px]">CPU SIMULATOR</span>
+<span class="font-mono text-[10px] text-zinc-400 bg-ide-elevated px-1.5 py-0.5 rounded border border-ide-border">v1.4.2 (8-bit Architecture Lab)</span>
+</div>
+<!-- Document Tabs -->
+<div class="flex items-center h-10 -my-2 overflow-x-auto">
+<div class="flex items-center gap-1.5 h-10 px-3 bg-ide-bg border-r border-ide-border border-t-2 border-t-blue-500 text-zinc-100 font-mono text-[11px] cursor-pointer">
+<span class="material-symbols-outlined text-[14px] text-blue-400">description</span>
+<span>main.asm</span>
+<span class="material-symbols-outlined text-[12px] text-zinc-400 hover:text-zinc-200 ml-1 rounded p-0.5 hover:bg-zinc-700/50">close</span>
+</div>
+<div class="flex items-center gap-1.5 h-10 px-3 hover:bg-ide-elevated border-r border-ide-border text-zinc-400 hover:text-zinc-300 font-mono text-[11px] cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[14px] text-zinc-400">description</span>
+<span>addition.asm</span>
+<span class="material-symbols-outlined text-[12px] opacity-0 hover:opacity-100 text-zinc-400 ml-1">close</span>
+</div>
+<div class="flex items-center gap-1.5 h-10 px-3 hover:bg-ide-elevated border-r border-ide-border text-zinc-400 hover:text-zinc-300 font-mono text-[11px] cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[14px] text-zinc-400">description</span>
+<span>loop.asm</span>
+<span class="material-symbols-outlined text-[12px] opacity-0 hover:opacity-100 text-zinc-400 ml-1">close</span>
+</div>
+</div>
+</div>
+<!-- Right Header Controls: Status & Utilities -->
+<div class="flex items-center gap-3">
+<!-- Minimalist Engine State -->
+<div class="flex items-center gap-1.5 font-mono text-[11px] px-2 py-0.5 rounded bg-zinc-900 border border-ide-border">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span class="text-emerald-400 font-medium tracking-wide">READY</span>
+</div>
+<div class="flex items-center gap-3 font-mono text-[11px] text-zinc-400 border-x border-ide-border px-3 py-0.5">
+<div><span class="text-zinc-400">PC:</span> <span class="text-zinc-200 font-semibold">0x0A</span></div>
+<div><span class="text-zinc-400">CYCLE:</span> <span class="text-zinc-200 font-semibold">12</span></div>
+</div>
+<!-- Window / View actions -->
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated rounded border border-transparent hover:border-ide-border" title="Toggle Layout Split">
+<span class="material-symbols-outlined text-[16px]">vertical_split</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated rounded border border-transparent hover:border-ide-border" title="Simulator Settings">
+<span class="material-symbols-outlined text-[16px]">settings</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated rounded border border-transparent hover:border-ide-border" title="ISA Manual &amp; Shortcuts">
+<span class="material-symbols-outlined text-[16px]">help</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN 3-COLUMN WORKSPACE -->
+<main class="flex-1 flex w-full overflow-hidden bg-ide-bg">
+<!-- 1. LEFT SIDEBAR: EXPLORER & BREAKPOINTS -->
+<aside class="w-60 shrink-0 bg-ide-panel border-r border-ide-border flex flex-col justify-between overflow-hidden">
+<!-- File Explorer Tree -->
+<div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
+<div class="px-3 py-2 flex items-center justify-between border-b border-ide-border text-zinc-400 font-semibold tracking-wider text-[10px] uppercase">
+<span>Explorer</span>
+<div class="flex items-center gap-1">
+<button class="text-zinc-400 hover:text-zinc-200 p-0.5 rounded hover:bg-ide-elevated" title="New File">
+<span class="material-symbols-outlined text-[13px]">note_add</span>
+</button>
+<button class="text-zinc-400 hover:text-zinc-200 p-0.5 rounded hover:bg-ide-elevated" title="Refresh">
+<span class="material-symbols-outlined text-[13px]">refresh</span>
+</button>
+</div>
+</div>
+<div class="py-1 text-[11px] font-mono">
+<!-- Folder: examples -->
+<div class="px-2 py-1 flex items-center gap-1.5 text-zinc-400 cursor-pointer hover:text-zinc-300">
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+<span class="material-symbols-outlined text-[14px] text-amber-500/80">folder</span>
+<span class="font-medium text-zinc-300">examples</span>
+</div>
+<div class="pl-6 pr-2 space-y-0.5">
+<div class="flex items-center justify-between px-2 py-1 rounded bg-ide-elevated text-zinc-100 cursor-pointer border border-ide-borderLight/40">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-blue-400">code</span>
+<span class="truncate">addition.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">8B</span>
+</div>
+<div class="flex items-center justify-between px-2 py-0.5 text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated/50 rounded cursor-pointer">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">code</span>
+<span class="truncate">subtraction.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">8B</span>
+</div>
+<div class="flex items-center justify-between px-2 py-0.5 text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated/50 rounded cursor-pointer">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">code</span>
+<span class="truncate">loop.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">14B</span>
+</div>
+<div class="flex items-center justify-between px-2 py-0.5 text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated/50 rounded cursor-pointer">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">code</span>
+<span class="truncate">fibonacci.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">22B</span>
+</div>
+<div class="flex items-center justify-between px-2 py-0.5 text-zinc-400 hover:text-zinc-200 hover:bg-ide-elevated/50 rounded cursor-pointer">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">code</span>
+<span class="truncate">memory.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">12B</span>
+</div>
+</div>
+<!-- Folder: user -->
+<div class="px-2 py-1 mt-2 flex items-center gap-1.5 text-zinc-400 cursor-pointer hover:text-zinc-300">
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+<span class="material-symbols-outlined text-[14px] text-amber-500/80">folder</span>
+<span class="font-medium text-zinc-300">user</span>
+</div>
+<div class="pl-6 pr-2 space-y-0.5">
+<div class="flex items-center justify-between px-2 py-0.5 text-zinc-300 hover:bg-ide-elevated/50 rounded cursor-pointer">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[13px] text-blue-400">code</span>
+<span class="truncate text-blue-200 font-medium">main.asm</span>
+</div>
+<span class="text-[9px] text-zinc-400 font-sans">11B</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Breakpoints Pane -->
+<div class="border-t border-ide-border shrink-0 flex flex-col h-44 bg-ide-panel">
+<div class="px-3 py-1.5 flex items-center justify-between border-b border-ide-border text-zinc-400 font-semibold tracking-wider text-[10px] uppercase">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[13px] text-red-400">radio_button_checked</span>
+<span>Breakpoints (2)</span>
+</div>
+<button class="text-zinc-400 hover:text-zinc-200" title="Remove all breakpoints">
+<span class="material-symbols-outlined text-[13px]">remove_done</span>
+</button>
+</div>
+<div class="p-2 space-y-1 overflow-y-auto font-mono text-[11px]">
+<label class="flex items-center justify-between p-1 rounded hover:bg-ide-elevated cursor-pointer group">
+<div class="flex items-center gap-2">
+<input checked="" class="rounded border-zinc-700 bg-zinc-900 text-blue-600 focus:ring-0 w-3 h-3" type="checkbox"/>
+<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+<span class="text-zinc-300 group-hover:text-zinc-100">main.asm:06</span>
+</div>
+<span class="text-[10px] text-zinc-400">0x06</span>
+</label>
+<label class="flex items-center justify-between p-1 rounded hover:bg-ide-elevated cursor-pointer group">
+<div class="flex items-center gap-2">
+<input checked="" class="rounded border-zinc-700 bg-zinc-900 text-blue-600 focus:ring-0 w-3 h-3" type="checkbox"/>
+<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+<span class="text-zinc-300 group-hover:text-zinc-100">main.asm:14</span>
+</div>
+<span class="text-[10px] text-zinc-400">0x0E</span>
+</label>
+</div>
+</div>
+</aside>
+<!-- 2. CENTER PANE: CODE EDITOR (PRIMARY FOCUS) & DEBUGGER TRACE -->
+<section class="flex-1 flex flex-col min-w-0 bg-ide-bg border-r border-ide-border">
+<!-- Top Action Toolbar (Restrained, Professional) -->
+<div class="h-9 px-3 bg-ide-panel border-b border-ide-border flex items-center justify-between shrink-0">
+<!-- Execution Controls -->
+<div class="flex items-center gap-1.5">
+<button class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">play_arrow</span>
+<span>Run</span>
+<span class="text-zinc-400 text-[10px] ml-0.5">F5</span>
+</button>
+<button class="px-2.5 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/40 rounded text-[11px] font-mono font-medium flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px] text-blue-400">redo</span>
+<span>Step</span>
+<span class="text-blue-300/70 text-[10px] ml-0.5">F6</span>
+</button>
+<button class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px] text-amber-400">pause</span>
+<span>Pause</span>
+<span class="text-zinc-400 text-[10px] ml-0.5">F8</span>
+</button>
+<button class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px] text-zinc-400">restart_alt</span>
+<span>Reset</span>
+<span class="text-zinc-400 text-[10px] ml-0.5">R</span>
+</button>
+<div class="h-4 w-px bg-ide-border mx-1"></div>
+<!-- Assembler Actions -->
+<button class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">build</span>
+<span>Assemble</span>
+</button>
+<button class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[13px] text-zinc-400">download</span>
+<span>Load to Memory</span>
+</button>
+</div>
+<!-- Clock Control Slider / Speed Pill -->
+<div class="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
+<span class="text-zinc-400">CLOCK:</span>
+<div class="flex items-center bg-zinc-900 border border-ide-border rounded p-0.5">
+<button class="px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">1Hz</button>
+<button class="px-1.5 py-0.5 bg-zinc-700 text-zinc-100 font-semibold rounded">5Hz</button>
+<button class="px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">20Hz</button>
+<button class="px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">MAX</button>
+</div>
+</div>
+</div>
+<!-- Inline Assembly Status / Notification -->
+<div class="bg-zinc-900/90 border-b border-ide-border px-3 py-1 flex items-center justify-between text-[11px] font-mono shrink-0">
+<div class="flex items-center gap-2 text-emerald-400">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Assembly successful — 6 instructions (11 bytes) loaded at 0x00</span>
+</div>
+<div class="text-zinc-400 flex items-center gap-3">
+<span>Target: 8-BIT ARCH</span>
+<span>Endian: Little</span>
+</div>
+</div>
+<!-- JetBrains / VS Code Monospace Code Editor -->
+<div class="flex-1 flex overflow-hidden font-mono text-[13px] leading-relaxed bg-ide-bg code-select">
+<!-- Gutter: Line Numbers & Breakpoints -->
+<div class="w-12 bg-ide-panel border-r border-ide-border py-2 flex flex-col select-none text-right shrink-0">
+<!-- Line 01 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">01</span>
+</div>
+<!-- Line 02 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">02</span>
+</div>
+<!-- Line 03 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">03</span>
+</div>
+<!-- Line 04 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">04</span>
+</div>
+<!-- Line 05 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">05</span>
+</div>
+<!-- Line 06 (Breakpoint & Active) -->
+<div class="h-6 flex items-center justify-between px-1.5 bg-blue-950/30 text-zinc-400">
+<span class="w-2 h-2 rounded-full bg-red-500 inline-block cursor-pointer" title="Breakpoint set"></span>
+<span class="text-[11px] text-zinc-300 font-bold">06</span>
+</div>
+<!-- Line 07 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">07</span>
+</div>
+<!-- Line 08 -->
+<div class="h-6 flex items-center justify-end px-2 text-zinc-400">
+<span class="text-[11px]">08</span>
+</div>
+</div>
+<!-- Code Content Lines -->
+<div class="flex-1 py-2 overflow-auto">
+<!-- Line 01 -->
+<div class="h-6 px-3 flex items-center text-zinc-400 hover:bg-zinc-900/60">
+<span>; Addition Example: Adds 10 + 20 and stores to 0x32</span>
+</div>
+<!-- Line 02 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60">
+<span class="font-bold text-zinc-100">START:</span>
+</div>
+<!-- Line 03 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60 pl-8">
+<span class="text-blue-400 font-medium">LOAD</span>
+<span class="text-zinc-200 ml-2">A</span><span class="text-zinc-400">,</span>
+<span class="text-emerald-400 ml-2 font-semibold">10</span>
+<span class="text-zinc-400 ml-auto select-none text-[11px] opacity-70">; [0x00] 10 0A</span>
+</div>
+<!-- Line 04 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60 pl-8">
+<span class="text-blue-400 font-medium">LOAD</span>
+<span class="text-zinc-200 ml-2">B</span><span class="text-zinc-400">,</span>
+<span class="text-emerald-400 ml-2 font-semibold">20</span>
+<span class="text-zinc-400 ml-auto select-none text-[11px] opacity-70">; [0x03] 10 14</span>
+</div>
+<!-- Line 05 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60 pl-8">
+<span class="text-zinc-400">; --- ALU Execution Step ---</span>
+</div>
+<!-- Line 06 (ACTIVE INSTRUCTION HIGHLIGHT - Restrained Navy Highlight) -->
+<div class="h-6 px-3 flex items-center bg-blue-950/40 border-l-2 border-blue-500 pl-[30px] relative">
+<span class="text-blue-400 font-medium">ADD</span>
+<span class="text-amber-300 ml-2 font-semibold">A</span><span class="text-zinc-400">,</span>
+<span class="text-amber-300 ml-2 font-semibold">B</span>
+<span class="text-zinc-400 ml-auto select-none text-[11px]">
+<span class="text-blue-400/80 mr-3">◀ CURRENT PC (0x06)</span>
+<span>; [0x06] 20 01</span>
+</span>
+</div>
+<!-- Line 07 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60 pl-8">
+<span class="text-blue-400 font-medium">STORE</span>
+<span class="text-zinc-200 ml-2">A</span><span class="text-zinc-400">,</span>
+<span class="text-emerald-400 ml-2 font-semibold">50</span>
+<span class="text-zinc-400 ml-auto select-none text-[11px] opacity-70">; [0x08] 30 32</span>
+</div>
+<!-- Line 08 -->
+<div class="h-6 px-3 flex items-center hover:bg-zinc-900/60 pl-8">
+<span class="text-red-400 font-medium">HALT</span>
+<span class="text-zinc-400 ml-auto select-none text-[11px] opacity-70">; [0x0A] FF</span>
+</div>
+</div>
+</div>
+<!-- Bottom Tabbed Pane: EXECUTION TRACE & OUTPUT -->
+<div class="h-56 bg-ide-panel border-t border-ide-border flex flex-col shrink-0">
+<!-- Trace Header Tabs -->
+<div class="h-8 bg-ide-panel border-b border-ide-border px-3 flex items-center justify-between">
+<div class="flex items-center gap-4 h-full">
+<button class="h-full border-b-2 border-blue-500 text-zinc-100 font-medium text-[11px] flex items-center gap-1.5">
+<span>EXECUTION TRACE</span>
+<span class="text-[10px] text-zinc-400 font-mono bg-ide-elevated px-1 rounded">4 cycles</span>
+</button>
+<button class="h-full border-b-2 border-transparent text-zinc-400 hover:text-zinc-300 text-[11px] flex items-center gap-1.5">
+<span>TERMINAL / CONSOLE</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined text-[13px] absolute left-1.5 top-1.5 text-zinc-400">filter_alt</span>
+<input class="bg-zinc-900 border border-ide-border rounded pl-6 pr-2 py-0.5 text-[11px] font-mono text-zinc-200 placeholder-zinc-400 w-44 focus:outline-none focus:border-zinc-500" placeholder="Filter cycle or register..." type="text"/>
+</div>
+<button class="text-zinc-400 hover:text-zinc-200 p-1 hover:bg-ide-elevated rounded" title="Clear Trace">
+<span class="material-symbols-outlined text-[14px]">block</span>
+</button>
+</div>
+</div>
+<!-- Trace Dense Debugger Table -->
+<div class="flex-1 overflow-auto bg-ide-bg font-mono text-[11px]">
+<table class="w-full text-left border-collapse">
+<thead class="bg-ide-panel sticky top-0 border-b border-ide-border text-zinc-400 text-[10px] uppercase">
+<tr>
+<th class="py-1 px-3 font-semibold w-16">CYCLE</th>
+<th class="py-1 px-3 font-semibold w-16">PC</th>
+<th class="py-1 px-3 font-semibold w-28">INSTRUCTION</th>
+<th class="py-1 px-3 font-semibold w-24">OPERANDS</th>
+<th class="py-1 px-3 font-semibold">MACHINE EFFECT</th>
+<th class="py-1 px-3 font-semibold text-right w-20">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-ide-border/50 text-zinc-300">
+<tr class="hover:bg-zinc-900/60">
+<td class="py-1 px-3 text-zinc-400">001</td>
+<td class="py-1 px-3 text-zinc-300 font-semibold">0x00</td>
+<td class="py-1 px-3 text-blue-400">LOAD</td>
+<td class="py-1 px-3 text-zinc-300">A, 10</td>
+<td class="py-1 px-3 text-zinc-200">REG A ← 0x0A (10)</td>
+<td class="py-1 px-3 text-right text-emerald-400">OK</td>
+</tr>
+<tr class="hover:bg-zinc-900/60">
+<td class="py-1 px-3 text-zinc-400">002</td>
+<td class="py-1 px-3 text-zinc-300 font-semibold">0x03</td>
+<td class="py-1 px-3 text-blue-400">LOAD</td>
+<td class="py-1 px-3 text-zinc-300">B, 20</td>
+<td class="py-1 px-3 text-zinc-200">REG B ← 0x14 (20)</td>
+<td class="py-1 px-3 text-right text-emerald-400">OK</td>
+</tr>
+<!-- Active Highlighted Cycle -->
+<tr class="bg-blue-950/30 border-l-2 border-blue-500 font-medium">
+<td class="py-1 px-3 text-blue-300">003</td>
+<td class="py-1 px-3 text-blue-200 font-semibold">0x06</td>
+<td class="py-1 px-3 text-blue-300">ADD</td>
+<td class="py-1 px-3 text-zinc-100">A, B</td>
+<td class="py-1 px-3 text-amber-200">
+<span>ALU RESULT: 0x1E (30) → REG A</span>
+<span class="ml-2 text-[9px] px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">DELTA</span>
+</td>
+<td class="py-1 px-3 text-right text-blue-400">ACTIVE</td>
+</tr>
+<tr class="text-zinc-400 hover:bg-zinc-900/40">
+<td class="py-1 px-3">004</td>
+<td class="py-1 px-3">0x08</td>
+<td class="py-1 px-3">STORE</td>
+<td class="py-1 px-3">A, 50</td>
+<td class="py-1 px-3">RAM[0x32] ← 0x1E (pending write)</td>
+<td class="py-1 px-3 text-right text-zinc-400">QUEUED</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- 3. RIGHT SIDEBAR: CPU STATE & REGISTER INSPECTOR (CLEAN DEBUGGER TABLES) -->
+<aside class="w-80 shrink-0 bg-ide-panel flex flex-col overflow-y-auto">
+<!-- Panel Header -->
+<div class="h-9 px-3 bg-ide-panel border-b border-ide-border flex items-center justify-between shrink-0">
+<span class="font-semibold text-zinc-200 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-zinc-400">developer_board</span>
+<span>CPU STATE</span>
+</span>
+<span class="font-mono text-[10px] text-zinc-400">ARCH: 8-BIT CISC</span>
+</div>
+<div class="p-3 space-y-4">
+<!-- SECTION: PIPELINE PHASE STEPPER (Quiet solid highlight) -->
+<div>
+<div class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Pipeline Phase</div>
+<div class="grid grid-cols-4 gap-1 font-mono text-[10px] text-center">
+<div class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-400">FETCH</div>
+<div class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-400">DECODE</div>
+<div class="py-1 bg-blue-600 text-white font-semibold rounded border border-blue-500">EXECUTE</div>
+<div class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-400">W-BACK</div>
+</div>
+</div>
+<!-- SECTION: GENERAL REGISTERS (Dense Table) -->
+<div>
+<div class="flex items-center justify-between text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+<span>General Registers</span>
+<span class="font-mono text-[9px] text-zinc-400">WORD: 8-BIT</span>
+</div>
+<div class="border border-ide-border rounded overflow-hidden bg-zinc-900 font-mono text-[11px]">
+<table class="w-full text-left border-collapse">
+<thead class="bg-ide-elevated text-zinc-400 text-[10px] border-b border-ide-border">
+<tr>
+<th class="py-1 px-2.5 font-semibold">REG</th>
+<th class="py-1 px-2 font-semibold">HEX</th>
+<th class="py-1 px-2 font-semibold">DEC</th>
+<th class="py-1 px-2 font-semibold">BINARY</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-ide-border/60">
+<!-- Reg A (Updated) -->
+<tr class="bg-blue-950/20 text-zinc-100">
+<td class="py-1.5 px-2.5 font-bold text-amber-300">A (ACC)</td>
+<td class="py-1.5 px-2 font-semibold text-blue-300">
+<span>0x1E</span>
+<span class="text-[9px] text-zinc-400 block font-normal leading-none mt-0.5">0x0A→0x1E</span>
+</td>
+<td class="py-1.5 px-2 text-zinc-200">30</td>
+<td class="py-1.5 px-2 text-zinc-400 text-[10px]">0001 1110</td>
+</tr>
+<!-- Reg B -->
+<tr class="hover:bg-zinc-800/40 text-zinc-300">
+<td class="py-1.5 px-2.5 font-bold text-zinc-300">B</td>
+<td class="py-1.5 px-2 text-zinc-200">0x14</td>
+<td class="py-1.5 px-2 text-zinc-400">20</td>
+<td class="py-1.5 px-2 text-zinc-400 text-[10px]">0001 0100</td>
+</tr>
+<!-- Reg C -->
+<tr class="hover:bg-zinc-800/40 text-zinc-300">
+<td class="py-1.5 px-2.5 font-bold text-zinc-300">C</td>
+<td class="py-1.5 px-2 text-zinc-200">0x05</td>
+<td class="py-1.5 px-2 text-zinc-400">5</td>
+<td class="py-1.5 px-2 text-zinc-400 text-[10px]">0000 0101</td>
+</tr>
+<!-- Reg D -->
+<tr class="hover:bg-zinc-800/40 text-zinc-300">
+<td class="py-1.5 px-2.5 font-bold text-zinc-300">D</td>
+<td class="py-1.5 px-2 text-zinc-200">0x00</td>
+<td class="py-1.5 px-2 text-zinc-400">0</td>
+<td class="py-1.5 px-2 text-zinc-400 text-[10px]">0000 0000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- SECTION: CONTROL REGISTERS -->
+<div>
+<div class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Control Registers</div>
+<div class="grid grid-cols-1 gap-1.5 font-mono text-[11px]">
+<div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between">
+<span class="text-zinc-400">PC (Program Counter):</span>
+<span class="text-zinc-100 font-semibold">0x0A <span class="text-zinc-400 font-normal">(10)</span></span>
+</div>
+<div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between">
+<span class="text-zinc-400">IR (Instruction Reg):</span>
+<span class="text-blue-300 font-semibold">ADD A, B <span class="text-zinc-400 font-normal">(0x20)</span></span>
+</div>
+<div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between">
+<span class="text-zinc-400">SP (Stack Pointer):</span>
+<span class="text-zinc-100 font-semibold">0xFF <span class="text-zinc-400 font-normal">(Stack Top)</span></span>
+</div>
+</div>
+</div>
+<!-- SECTION: FLAGS (CCR) -->
+<div>
+<div class="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Condition Code Flags (CCR)</div>
+<div class="grid grid-cols-4 gap-1.5 font-mono text-[11px]">
+<div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center">
+<div class="text-[9px] text-zinc-400">Z (Zero)</div>
+<div class="font-bold text-zinc-300 mt-0.5">0</div>
+</div>
+<div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center">
+<div class="text-[9px] text-zinc-400">C (Carry)</div>
+<div class="font-bold text-zinc-300 mt-0.5">0</div>
+</div>
+<div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center">
+<div class="text-[9px] text-zinc-400">S (Sign)</div>
+<div class="font-bold text-zinc-300 mt-0.5">0</div>
+</div>
+<div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center">
+<div class="text-[9px] text-zinc-400">V (Ovrflw)</div>
+<div class="font-bold text-zinc-300 mt-0.5">0</div>
+</div>
+</div>
+</div>
+<!-- SECTION: QUICK MEMORY PEEK (Hex Dump 0x30..0x37) -->
+<div>
+<div class="flex items-center justify-between text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+<span>Memory Peek (0x30 – 0x37)</span>
+<span class="font-mono text-[9px] text-zinc-400">DATA SEG</span>
+</div>
+<div class="bg-zinc-900 border border-ide-border rounded p-2 font-mono text-[11px]">
+<div class="grid grid-cols-9 gap-1 text-center text-zinc-400 text-[10px] border-b border-ide-border pb-1 mb-1.5">
+<span class="text-left font-bold text-zinc-400">ADDR</span>
+<span>+0</span>
+<span>+1</span>
+<span class="text-blue-400 font-bold">+2</span>
+<span>+3</span>
+<span>+4</span>
+<span>+5</span>
+<span>+6</span>
+<span>+7</span>
+</div>
+<div class="grid grid-cols-9 gap-1 text-center items-center text-[11px]">
+<span class="text-left text-zinc-400 font-semibold text-[10px]">0x30:</span>
+<span class="text-zinc-400">00</span>
+<span class="text-zinc-400">00</span>
+<!-- Modified Target Byte at 0x32: 1E (30) -->
+<span class="bg-blue-600 text-white font-bold rounded py-0.5" title="Address 0x32 = 0x1E (30)">1E</span>
+<span class="text-zinc-400">00</span>
+<span class="text-zinc-400">00</span>
+<span class="text-zinc-400">00</span>
+<span class="text-zinc-400">00</span>
+<span class="text-zinc-400">00</span>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[10px] text-zinc-400 font-mono">
+<span>Target RAM[0x32] = 30 (Dec)</span>
+<span class="text-emerald-400">STABLE</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- BOTTOM STATUS BAR (Classic Desktop IDE / VS Code Style) -->
+<footer class="h-6 bg-ide-panel border-t border-ide-border px-3 flex items-center justify-between text-[11px] font-mono shrink-0 select-none z-20">
+<!-- Left Status Metrics -->
+<div class="flex items-center gap-3 text-zinc-400">
+<div class="flex items-center gap-1.5 hover:text-zinc-200 cursor-pointer">
+<span>Ln 6, Col 12</span>
+</div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div class="hover:text-zinc-200 cursor-pointer">Spaces: 4</div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div class="hover:text-zinc-200 cursor-pointer">UTF-8</div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div class="text-zinc-300 font-medium">x86_8-BIT ASM</div>
+</div>
+<!-- Center Bus / Phase Telemetry -->
+<div class="flex items-center gap-4 text-zinc-400">
+<div>Phase: <span class="text-blue-400 font-medium">EXECUTE (T3)</span></div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div>Bus: <span class="text-zinc-300">REG_A + REG_B → ALU</span></div>
+</div>
+<!-- Right System Health & Clock -->
+<div class="flex items-center gap-3 text-zinc-400">
+<div>RAM: <span class="text-zinc-200">11 / 256 B</span> (4.3%)</div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div>Clock: <span class="text-zinc-200 font-medium">5.0 Hz</span></div>
+<div class="h-3 w-px bg-ide-border"></div>
+<div class="flex items-center gap-1.5 text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>SIMULATOR: READY</span>
+</div>
+</div>
+</footer>
+</body></html>
