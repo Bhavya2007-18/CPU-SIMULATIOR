@@ -1,0 +1,40 @@
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #141416; }
+::-webkit-scrollbar-thumb { background: #2e2e33; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3e3e44; }
+* { scrollbar-width: thin; scrollbar-color: #2e2e33 #141416; }
+
+textarea { tab-size: 4; }
+.code-select { user-select: text; }
+
+/* Program listing rows */
+.lrow { display: flex; align-items: center; height: 22px; padding-left: 6px; border-left: 2px solid transparent; }
+.lrow:hover { background: rgba(39,39,42,0.6); }
+.lrow.active { background: rgba(37,99,235,0.16); border-left-color: #3b82f6; }
+.lgutter { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.lgutter .dot { width: 7px; height: 7px; border-radius: 9999px; background: transparent; }
+.lgutter:hover .dot { background: #ef4444; }
+.lgutter.has .dot { background: #ef4444; }
+.laddr { width: 36px; color: #71717a; }
+.lbytes { width: 84px; color: #52525b; letter-spacing: 1px; }
+.ltext { color: #e4e4e7; }
+.ltext .op { color: #60a5fa; font-weight: 500; }
+.ltext .reg { color: #fbbf24; }
+.ltext .num { color: #34d399; }
+.ltext .lab { color: #c4b5fd; }
+
+/* Memory grid */
+#memGrid { display: grid; grid-template-columns: 30px repeat(16, 1fr); gap: 1px; }
+.mem-addr { color: #52525b; text-align: right; padding-right: 4px; }
+.mem-cell { text-align: center; padding: 1px 0; border-radius: 2px; color: #a1a1aa; }
+.mem-zero { color: #3f3f46; }
+.mem-changed { color: #f59e0b; background: rgba(245,158,11,0.12); }
+.mem-pc { outline: 1px solid #3b82f6; }
+
+/* trace */
+#traceBody tr.active td { color: #93c5fd; }
+tr.halted-row td { color: #6b7280; }
+
+/* flag on */
+.f-on { color: #22c55e !important; }
+.f-err { color: #ef4444 !important; }

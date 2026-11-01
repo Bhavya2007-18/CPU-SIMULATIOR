@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CPU Simulator — 8-bit Architecture Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: {
+      colors: { ide: {
+        bg:"#121214", panel:"#18181b", elevated:"#1f1f23", border:"#27272a",
+        borderLight:"#333338", text:"#f4f4f5", muted:"#71717a", active:"#2563eb"
+      }},
+      fontFamily: { sans:["Inter","sans-serif"], mono:["JetBrains Mono","Menlo","monospace"] }
+    }}
+  };
+</script>
+<link rel="stylesheet" href="app.css"/>
+</head>
+<body class="bg-ide-bg text-ide-text font-sans antialiased text-xs h-screen flex flex-col overflow-hidden select-none">
+
+<!-- HEADER -->
+<header class="h-10 bg-ide-panel border-b border-ide-border flex items-center justify-between px-3 shrink-0 z-20">
+  <div class="flex items-center gap-2 pr-2 border-r border-ide-border">
+    <span class="material-symbols-outlined text-[18px] text-zinc-300">memory</span>
+    <span class="font-semibold tracking-tight text-zinc-100 text-[13px]">CPU SIMULATOR</span>
+    <span class="font-mono text-[10px] text-zinc-400 bg-ide-elevated px-1.5 py-0.5 rounded border border-ide-border">8-bit Architecture Lab</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <div id="engineStatus" class="flex items-center gap-1.5 font-mono text-[11px] px-2 py-0.5 rounded bg-zinc-900 border border-ide-border">
+      <span id="engineDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      <span id="engineLabel" class="text-emerald-400 font-medium tracking-wide">READY</span>
+    </div>
+    <div class="flex items-center gap-3 font-mono text-[11px] text-zinc-400 border-x border-ide-border px-3 py-0.5">
+      <div><span class="text-zinc-500">PC:</span> <span id="hdrPC" class="text-zinc-200 font-semibold">0x00</span></div>
+      <div><span class="text-zinc-500">CYCLE:</span> <span id="hdrCycle" class="text-zinc-200 font-semibold">0</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="flex-1 flex w-full overflow-hidden bg-ide-bg">
+
+  <!-- LEFT: examples + breakpoints -->
+  <aside class="w-56 shrink-0 bg-ide-panel border-r border-ide-border flex flex-col overflow-hidden">
+    <div class="px-3 py-2 flex items-center justify-between border-b border-ide-border text-zinc-400 font-semibold tracking-wider text-[10px] uppercase">
+      <span>Examples</span>
+      <span class="material-symbols-outlined text-[13px]">folder</span>
+    </div>
+    <div id="examplesList" class="flex-1 overflow-y-auto py-1 font-mono text-[11px]"></div>
+    <div class="border-t border-ide-border shrink-0 flex flex-col h-40">
+      <div class="px-3 py-1.5 flex items-center justify-between border-b border-ide-border text-zinc-400 font-semibold tracking-wider text-[10px] uppercase">
+        <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[13px] text-red-400">radio_button_checked</span>Breakpoints</span>
+        <button id="clearBreaks" class="text-zinc-400 hover:text-zinc-200" title="Remove all breakpoints"><span class="material-symbols-outlined text-[13px]">remove_done</span></button>
+      </div>
+      <div id="breakpointList" class="p-2 space-y-1 overflow-y-auto font-mono text-[11px]"></div>
+    </div>
+  </aside>
+
+  <!-- CENTER: toolbar + source + listing + trace -->
+  <section class="flex-1 flex flex-col min-w-0 bg-ide-bg border-r border-ide-border">
+
+    <!-- toolbar -->
+    <div class="h-9 px-3 bg-ide-panel border-b border-ide-border flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-1.5">
+        <button id="btnAssemble" class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1">
+          <span class="material-symbols-outlined text-[13px] text-zinc-400">build</span>Assemble &amp; Load
+        </button>
+        <div class="h-4 w-px bg-ide-border mx-1"></div>
+        <button id="btnStep" class="px-2.5 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/40 rounded text-[11px] font-mono font-medium flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px] text-blue-400">redo</span>Step<span class="text-blue-300/70 text-[10px] ml-0.5">F6</span>
+        </button>
+        <button id="btnRun" class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px] text-emerald-400">play_arrow</span>Run<span class="text-zinc-400 text-[10px] ml-0.5">F5</span>
+        </button>
+        <button id="btnPause" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1 opacity-60">
+          <span class="material-symbols-outlined text-[14px] text-amber-400">pause</span>Pause
+        </button>
+        <button id="btnReset" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-ide-border rounded text-[11px] font-mono flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px] text-zinc-400">restart_alt</span>Reset
+        </button>
+      </div>
+      <div class="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
+        <span class="text-zinc-500">CLOCK:</span>
+        <div id="clockGroup" class="flex items-center bg-zinc-900 border border-ide-border rounded p-0.5">
+          <button data-hz="1"  class="clk px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">1Hz</button>
+          <button data-hz="5"  class="clk px-1.5 py-0.5 bg-zinc-700 text-zinc-100 font-semibold rounded">5Hz</button>
+          <button data-hz="20" class="clk px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">20Hz</button>
+          <button data-hz="0"  class="clk px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200 rounded">MAX</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- assembly status -->
+    <div id="asmStatus" class="bg-zinc-900/90 border-b border-ide-border px-3 py-1 flex items-center justify-between text-[11px] font-mono shrink-0">
+      <span id="asmStatusText" class="text-zinc-400">No program loaded. Open an example or type assembly, then “Assemble &amp; Load”.</span>
+      <span class="text-zinc-500">8-BIT ARCH</span>
+    </div>
+
+    <!-- source editor -->
+    <div class="flex flex-col shrink-0 border-b border-ide-border" style="height:170px">
+      <div class="px-3 py-1 bg-ide-panel/60 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Source Editor</div>
+      <textarea id="source" spellcheck="false"
+        class="flex-1 w-full bg-ide-bg text-zinc-100 font-mono text-[13px] leading-relaxed outline-none resize-none p-3 code-select"
+        placeholder="; type 8-bit assembly here&#10;LOAD A, 10&#10;LOAD B, 20&#10;ADD A, B&#10;STORE A, 50&#10;HALT"></textarea>
+    </div>
+
+    <!-- program listing -->
+    <div class="flex flex-col flex-1 min-h-0">
+      <div class="px-3 py-1 bg-ide-panel/60 border-b border-ide-border text-[10px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
+        <span>Program / Disassembly</span>
+        <span id="progInfo" class="text-zinc-500 font-mono normal-case tracking-normal text-[10px]"></span>
+      </div>
+      <div id="listing" class="flex-1 overflow-auto font-mono text-[12px] code-select"></div>
+    </div>
+
+    <!-- execution trace -->
+    <div class="h-44 bg-ide-panel border-t border-ide-border flex flex-col shrink-0">
+      <div class="h-8 bg-ide-panel border-b border-ide-border px-3 flex items-center justify-between">
+        <span class="border-b-2 border-blue-500 text-zinc-100 font-medium text-[11px] flex items-center gap-1.5 h-full">
+          EXECUTION TRACE<span id="traceCount" class="text-[10px] text-zinc-400 font-mono bg-ide-elevated px-1 rounded">0</span>
+        </span>
+        <button id="clearTrace" class="text-zinc-400 hover:text-zinc-200 p-1 hover:bg-ide-elevated rounded" title="Clear trace"><span class="material-symbols-outlined text-[14px]">block</span></button>
+      </div>
+      <div class="flex-1 overflow-auto bg-ide-bg font-mono text-[11px]">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-ide-panel sticky top-0 border-b border-ide-border text-zinc-500 text-[10px] uppercase">
+            <tr>
+              <th class="py-1 px-2 font-semibold w-12">CYCLE</th>
+              <th class="py-1 px-2 font-semibold w-16">PC</th>
+              <th class="py-1 px-2 font-semibold">INSTRUCTION</th>
+              <th class="py-1 px-2 font-semibold">A / B / C / D</th>
+              <th class="py-1 px-2 font-semibold">Z C S V</th>
+            </tr>
+          </thead>
+          <tbody id="traceBody" class="divide-y divide-ide-border/50 text-zinc-300"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: CPU state -->
+  <aside class="w-80 shrink-0 bg-ide-panel flex flex-col overflow-y-auto">
+    <div class="h-9 px-3 bg-ide-panel border-b border-ide-border flex items-center justify-between shrink-0">
+      <span class="font-semibold text-zinc-200 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[15px] text-zinc-400">developer_board</span>CPU STATE
+      </span>
+      <span class="font-mono text-[10px] text-zinc-500">8-BIT</span>
+    </div>
+    <div class="p-3 space-y-4">
+
+      <!-- pipeline phase -->
+      <div>
+        <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Pipeline Phase</div>
+        <div class="grid grid-cols-4 gap-1 font-mono text-[10px] text-center">
+          <div id="phFETCH"   class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-500">FETCH</div>
+          <div id="phDECODE"  class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-500">DECODE</div>
+          <div id="phEXECUTE" class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-500">EXECUTE</div>
+          <div id="phWB"      class="py-1 bg-zinc-900 border border-ide-border rounded text-zinc-500">W-BACK</div>
+        </div>
+      </div>
+
+      <!-- general registers -->
+      <div>
+        <div class="flex items-center justify-between text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">
+          <span>General Registers</span><span class="font-mono text-[9px] text-zinc-500">8-BIT</span>
+        </div>
+        <div class="border border-ide-border rounded overflow-hidden bg-zinc-900 font-mono text-[11px]">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-ide-elevated text-zinc-500 text-[10px] border-b border-ide-border">
+              <tr><th class="py-1 px-2 font-semibold">REG</th><th class="py-1 px-1 font-semibold">HEX</th><th class="py-1 px-1 font-semibold">DEC</th><th class="py-1 px-1 font-semibold">BINARY</th></tr>
+            </thead>
+            <tbody id="regBody" class="divide-y divide-ide-border/60"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- control registers -->
+      <div>
+        <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Control Registers</div>
+        <div class="grid grid-cols-1 gap-1.5 font-mono text-[11px]">
+          <div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between"><span class="text-zinc-500">PC</span><span id="cPC" class="text-zinc-100 font-semibold">0x00 <span class="text-zinc-500 font-normal">(0)</span></span></div>
+          <div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between"><span class="text-zinc-500">IR</span><span id="cIR" class="text-blue-300 font-semibold">—</span></div>
+          <div class="px-2.5 py-1.5 bg-zinc-900 border border-ide-border rounded flex items-center justify-between"><span class="text-zinc-500">SP</span><span id="cSP" class="text-zinc-100 font-semibold">0xFF <span class="text-zinc-500 font-normal">(255)</span></span></div>
+        </div>
+      </div>
+
+      <!-- flags -->
+      <div>
+        <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Flags (CCR)</div>
+        <div class="grid grid-cols-4 gap-1.5 font-mono text-[11px]">
+          <div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center"><div class="text-[9px] text-zinc-500">Z</div><div id="fZ" class="font-bold text-zinc-500 mt-0.5">0</div></div>
+          <div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center"><div class="text-[9px] text-zinc-500">C</div><div id="fC" class="font-bold text-zinc-500 mt-0.5">0</div></div>
+          <div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center"><div class="text-[9px] text-zinc-500">S</div><div id="fS" class="font-bold text-zinc-500 mt-0.5">0</div></div>
+          <div class="p-1.5 bg-zinc-900 border border-ide-border rounded text-center"><div class="text-[9px] text-zinc-500">V</div><div id="fV" class="font-bold text-zinc-500 mt-0.5">0</div></div>
+        </div>
+      </div>
+
+      <!-- memory grid -->
+      <div>
+        <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Memory (256 bytes)</div>
+        <div id="memGrid" class="bg-zinc-900 border border-ide-border rounded p-2 font-mono text-[10px]"></div>
+      </div>
+
+    </div>
+  </aside>
+</main>
+
+<!-- STATUS BAR -->
+<footer class="h-6 bg-ide-panel border-t border-ide-border px-3 flex items-center justify-between text-[11px] font-mono shrink-0 z-20 text-zinc-500">
+  <div class="flex items-center gap-3">
+    <span id="statusMsg">Ready</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <span>8-BIT ASM</span><span class="text-zinc-700">|</span><span id="memWrite">RAM 0x00</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

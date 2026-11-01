@@ -1,9 +1,10 @@
 # CPU Simulator - PowerShell build script for Windows (when `make` is absent).
 # Usage:
-#   powershell -File build.ps1            # build the simulator (all)
-#   powershell -File build.ps1 test        # build + run all unit tests
-#   powershell -File build.ps1 run         # run the acceptance program
-#   powershell -File build.ps1 clean       # remove build output
+#   .\build.ps1            build the simulator + server (all)
+#   .\build.ps1 test       build + run all unit tests
+#   .\build.ps1 run        run the acceptance program (CLI)
+#   .\build.ps1 serve      build + start the web frontend server (http://localhost:8080)
+#   .\build.ps1 clean      remove build output
 
 param([string]$Target = "all")
 
@@ -16,6 +17,7 @@ $LIB = @(
     "src/cpu/execution_trace.cpp", "src/alu/alu.cpp", "src/memory/memory.cpp",
     "src/assembler/assembler.cpp", "src/debugger/debugger.cpp"
 )
+$SRV_SRC = @("src/server/server.cpp", "src/server/main_server.cpp")
 $TESTS = @("test_alu", "test_memory", "test_decoder",
            "test_cpu", "test_assembler", "test_integration")
 
@@ -23,24 +25,31 @@ function Fail([string]$msg) { Write-Output "BUILD FAILED: $msg"; exit 1 }
 
 if (-not (Test-Path $BUILD)) { New-Item -ItemType Directory -Path $BUILD | Out-Null }
 
+function Build-Simulator {
+    $a = $CXXFLAGS + $LIB + @("src/main.cpp", "-o", "$BUILD/cpu-simulator.exe")
+    & $CXX @a
+    if ($LASTEXITCODE -ne 0) { Fail "main build" }
+}
+function Build-Server {
+    $a = $CXXFLAGS + $LIB + $SRV_SRC + @("-lws2_32", "-o", "$BUILD/cpu-server.exe")
+    & $CXX @a
+    if ($LASTEXITCODE -ne 0) { Fail "server build" }
+}
+
 switch ($Target) {
     "all" {
-        $a = $CXXFLAGS + $LIB + @("src/main.cpp", "-o", "$BUILD/cpu-simulator.exe")
-        & $CXX @a
-        if ($LASTEXITCODE -ne 0) { Fail "main build" }
-        Write-Output "Built $BUILD/cpu-simulator.exe"
+        Build-Simulator
+        Build-Server
+        Write-Output "Built $BUILD/cpu-simulator.exe and $BUILD/cpu-server.exe"
     }
     "test" {
-        # Build the main binary and every test binary.
-        $a = $CXXFLAGS + $LIB + @("src/main.cpp", "-o", "$BUILD/cpu-simulator.exe")
-        & $CXX @a; if ($LASTEXITCODE -ne 0) { Fail "main build" }
+        Build-Simulator
         foreach ($t in $TESTS) {
             $ta = $CXXFLAGS + $LIB + @("tests/$t.cpp", "-o", "$BUILD/$t.exe")
             & $CXX @ta
             if ($LASTEXITCODE -ne 0) { Fail "building $t" }
             Write-Output "built $t"
         }
-        # Run the tests.
         $anyFail = 0
         foreach ($t in $TESTS) {
             Write-Output "=== $t ==="
@@ -51,13 +60,17 @@ switch ($Target) {
         Write-Output "ALL TESTS PASSED"
     }
     "run" {
-        $a = $CXXFLAGS + $LIB + @("src/main.cpp", "-o", "$BUILD/cpu-simulator.exe")
-        & $CXX @a; if ($LASTEXITCODE -ne 0) { Fail "main build" }
+        Build-Simulator
         & "$BUILD/cpu-simulator.exe" --run examples/acceptance.asm
+    }
+    "serve" {
+        Build-Server
+        Write-Output "Starting CPU Simulator server at http://localhost:8080  (Ctrl+C to stop)"
+        & "$BUILD/cpu-server.exe"
     }
     "clean" {
         if (Test-Path $BUILD) { Remove-Item -Recurse -Force $BUILD }
         Write-Output "cleaned"
     }
-    default { Write-Output "Unknown target: $Target. Use: all | test | run | clean"; exit 1 }
+    default { Write-Output "Unknown target: $Target. Use: all | test | run | serve | clean"; exit 1 }
 }

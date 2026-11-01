@@ -16,5 +16,4 @@ cpu-simulator
 Thumbs.db
 
 # Diagnostics / temp
-*.txt
-!docs/*.txt
+*.log
