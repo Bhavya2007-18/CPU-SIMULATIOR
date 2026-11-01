@@ -1,5 +1,4 @@
 # CPU-SIMULATIOR
-# CPU SIMULATOR
 
 > **A software-based 8-bit CPU architecture simulator for visualizing how a processor fetches, decodes, and executes instructions.**
 
